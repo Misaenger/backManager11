@@ -1,13 +1,10 @@
 <template>
-  <div id="app">
-    
-    <router-view/>
-  </div>
+  <div>登录</div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'login'
 }
 </script>
 
