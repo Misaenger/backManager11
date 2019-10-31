@@ -27,8 +27,8 @@ export default {
 		}
 	},
 	methods: {
-		handleLogin() {
-			this.$axios.post('login', this.formData).then(res => {
+		async handleLogin() {
+			const res = await this.$axios.post('login', this.formData)
 
 				const { data, meta: { msg, status } } = res.data
 
@@ -43,7 +43,7 @@ export default {
 				} else {  // res.data.meta.status = 400
           this.$message.error(msg)
 				}
-			})
+			
 		}
 	}
 }
