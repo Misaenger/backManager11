@@ -32,7 +32,9 @@ export default {
 
 				const { data, meta: { msg, status } } = res.data
 
-				if (status === 200) {  // res.data.meta.status = 200
+        if (status === 200) {  // res.data.meta.status = 200
+          localStorage.setItem('token',data.token)
+
 					this.$router.push({name:'home'})
 					this.$notify.success({
             title:'good',
