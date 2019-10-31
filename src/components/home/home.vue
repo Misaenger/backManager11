@@ -8,7 +8,7 @@
       <el-container>
         <el-aside class="container-aside">
 
-          <el-menu :unique-opened="true">
+          <el-menu :unique-opened="true" :router="true">
             <!-- 1 -->
             <el-submenu index="1">
               <template slot="title">
@@ -16,7 +16,7 @@
                 <span>用户管理</span>
               </template>
               <!-- 1-1 -->
-              <el-menu-item index="1-1">
+              <el-menu-item index="users">
                 <i class="el-icon-edit-outline"></i>
                 <span>用户列表</span>
               </el-menu-item>
@@ -88,7 +88,9 @@
           </el-menu>
 
         </el-aside>
-        <el-main class="container-main">Main</el-main>
+        <el-main class="container-main">
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
