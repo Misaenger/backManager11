@@ -36,14 +36,15 @@ export default {
           localStorage.setItem('token',data.token)
 
 					this.$router.push({name:'home'})
-					this.$notify.success({
-            title:'good',
+					this.$message.success(msg)
+					
+				} else {  // res.data.meta.status = 400
+          this.$notify.error({
+            title:'wrong',
 						message: msg,
 						position: 'top-left',
-            duration: 1200
-					})
-				} else {  // res.data.meta.status = 400
-          this.$message.error(msg)
+            duration: 1600
+          })
 				}
 			
 		}
