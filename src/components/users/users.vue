@@ -20,19 +20,34 @@
     <el-table :data="tableData" style="width: 100%">
       <el-table-column type="index" label="#" width="40">
       </el-table-column>
-      <el-table-column prop="name" label="姓名" width="80">
+      <el-table-column prop="username" label="姓名" width="80">
       </el-table-column>
-      <el-table-column prop="address" label="邮箱">
+      <el-table-column prop="email" label="邮箱">
       </el-table-column>
-      <el-table-column prop="date" label="创建日期">
+      <el-table-column prop="mobile" label="电话">
       </el-table-column>
-      <el-table-column prop="address" label="用户状态">
+      <el-table-column prop="create_time" label="创建日期">
+        <template slot-scope="tableData">
+          {{tableData.row.create_time | fmtdate}}
+        </template>
       </el-table-column>
-      <el-table-column prop="address" label="操作">
+      <el-table-column prop="mg_state" label="用户状态">
+        <template slot-scope="tableData">
+          <el-switch v-model="tableData.row.mg_state" active-color="#13ce66" inactive-color="#ddd">
+          </el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column prop="address" label="操作" width="300">
+        <template slot-scope="scope">
+          <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
+          <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+          <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+        </template>
       </el-table-column>
     </el-table>
 
   </el-card>
+
 </template>
 
 <script>
@@ -43,28 +58,13 @@ export default {
 			query: '',
 			pagenum: 1,
 			pagesize: 5,
-			tableData: [
-				{
-					date: '2016-05-02',
-					name: '王小虎',
-					address: 'xuyujun_by@163.com'
-				},
-				{
-					date: '2016-05-04',
-					name: '刘晓萌',
-					address: 'xiaomen_by@163.com'
-				},
-				{
-					date: '2016-05-01',
-					name: '李大锤',
-					address: 'dachui_by@163.com'
-				}
-			]
+			total: -1,
+			tableData: []
 		}
 	},
 	methods: {
 		async getUserList() {
-			const { data: res } = await this.$axios.get('users', {
+			const res = await this.$axios.get('users', {
 				params: {
 					query: this.query,
 					pagenum: this.pagenum,
@@ -72,6 +72,14 @@ export default {
 				}
 			})
 			console.log(res)
+			const { data: { total, users }, meta: { msg, status } } = res.data
+			if (status === 200) {
+				this.tableData = users
+				this.total = total
+				this.value = users.mg_state
+			} else {
+				this.$message.warning('数据获取错误')
+			}
 		}
 	},
 	created() {
