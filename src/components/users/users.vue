@@ -23,7 +23,7 @@
         </el-table-column>
         <el-table-column prop="username" label="姓名" width="160">
         </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="160">
+        <el-table-column prop="email" label="邮箱" width="200">
         </el-table-column>
         <el-table-column prop="mobile" label="电话" width="160">
         </el-table-column>
@@ -34,13 +34,13 @@
         </el-table-column>
         <el-table-column prop="mg_state" label="用户状态" width="80">
           <template slot-scope="tableData">
-            <el-switch v-model="tableData.row.mg_state" active-color="#13ce66" inactive-color="#ddd">
+            <el-switch v-model="tableData.row.mg_state" active-color="#13ce66" inactive-color="#ddd" @change="changeMgState(tableData.row)">
             </el-switch>
           </template>
         </el-table-column>
         <el-table-column prop="address" label="操作" width="160">
           <template slot-scope="scope">
-            <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia()"></el-button>
+            <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia(scope.row)"></el-button>
             <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="ShowDeleteUser(scope.row.id)"></el-button>
             <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
           </template>
@@ -79,7 +79,7 @@
     <el-dialog title="修改用户信息" :visible.sync="dialogformVisibleAEdit" :modal-append-to-body=false>
       <el-form :model="form">
         <el-form-item label="用户名" :label-width="formLabelWidth">
-          <el-input v-model="form.username" autocomplete="off"></el-input>
+          <el-input v-model="form.username" autocomplete="off" disabled></el-input>
         </el-form-item>
         <el-form-item label="邮箱" :label-width="formLabelWidth">
           <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -91,7 +91,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogformVisibleAEdit = false">取 消</el-button>
-        <el-button type="primary" @click="dialogformVisibleAEdit = false">确 定</el-button>
+        <el-button type="primary" @click="editUser()">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -155,10 +155,10 @@ export default {
 			this.getUserList() // 重新获取数据
 		},
 		clear() {
-			this.getUserList() // 重新获取数据
+			this.getUserList() // 重新获取数据 更新视图
 		},
 
-		upPop() {
+		upPop() {  // 打开删除对话框
 			this.dialogformVisibleAdd = true
 		},
 		async addUser() {
@@ -199,9 +199,26 @@ export default {
 				})
 		},
 		// 点击按钮打开对话框修改用户信息
-		showEditUserDia() {
+		showEditUserDia(user) {
+			this.form = user // 获取当前点击项用户数据
 			this.dialogformVisibleAEdit = true
-		}
+		},
+		async editUser() {
+			const res = await this.$axios.put('users/' + this.form.id, this.form)
+
+			const { data, meta: { msg, status } } = res.data
+			if (status === 200) {
+				this.$message.success(msg)
+				this.getUserList() // 重新获取数据 更新视图
+        this.dialogformVisibleAEdit = false
+        this.form = {}
+			}
+    },
+    async changeMgState(user,){
+      const res = await this.$axios.put(`users/${user.id}/state/${user.mg_state}`)
+      
+      console.log(res)
+    }
 	},
 	created() {
 		this.getUserList()
