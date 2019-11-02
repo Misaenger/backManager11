@@ -40,12 +40,13 @@
         </el-table-column>
         <el-table-column prop="address" label="操作" width="160">
           <template slot-scope="scope">
-            <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
-            <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+            <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia()"></el-button>
+            <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="ShowDeleteUser(scope.row.id)"></el-button>
             <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
           </template>
         </el-table-column>
       </el-table>
+
       <!-- 分页器 -->
       <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pagenum" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[2, 4, 6, 8, 10]">
       </el-pagination>
@@ -73,6 +74,27 @@
         <el-button type="primary" @click="addUser">确 定</el-button>
       </div>
     </el-dialog>
+
+    <!-- 修改用户对话框 -->
+    <el-dialog title="修改用户信息" :visible.sync="dialogformVisibleAEdit" :modal-append-to-body=false>
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          <el-input v-model="form.username" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱" :label-width="formLabelWidth">
+          <el-input v-model="form.email" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话" :label-width="formLabelWidth">
+          <el-input v-model="form.mobile" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogformVisibleAEdit = false">取 消</el-button>
+        <el-button type="primary" @click="dialogformVisibleAEdit = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -94,7 +116,8 @@ export default {
 				email: '',
 				mobile: ''
 			},
-			formLabelWidth: '60px'
+			formLabelWidth: '60px',
+			dialogformVisibleAEdit: false
 		}
 	},
 	methods: {
@@ -141,16 +164,43 @@ export default {
 		async addUser() {
 			// 在后台添加用户
 			const res = await this.$axios.post('users', this.form) // 直接将form对象传过去里面包含4个请求参数
-      console.log(res)
-      const { data,meta:{ msg,status } } = res.data
-      if(status===201){
-        this.dialogformVisibleAdd = false
-        this.$message.success(msg)
-        this.getUserList() // 重新获取数据
-        this.form = {}
-      }else{
-        this.$message.warning(msg)
-      }
+			console.log(res)
+			const { data, meta: { msg, status } } = res.data
+			if (status === 201) {
+				this.dialogformVisibleAdd = false
+				this.$message.success(msg)
+				this.getUserList() // 重新获取数据
+				this.form = {}
+			} else {
+				this.$message.warning(msg)
+			}
+		},
+
+		// 点击按钮打开JS弹窗确认删除用户
+		ShowDeleteUser(userId) {
+			this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+				.then(async () => {
+					// 点击确定触发
+					// ...删除后台对应用户数据
+					const res = await this.$axios.delete('users/' + userId)
+					const { data, meta: { msg, status } } = res.data
+					if (status === 200) {
+						this.$message.success(msg)
+						this.getUserList() // 重新获取数据
+					}
+				})
+				.catch(() => {
+					// 点击取消触发
+					this.$message({ type: 'info', message: '已取消删除' })
+				})
+		},
+		// 点击按钮打开对话框修改用户信息
+		showEditUserDia() {
+			this.dialogformVisibleAEdit = true
 		}
 	},
 	created() {
