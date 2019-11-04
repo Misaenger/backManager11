@@ -42,7 +42,7 @@
           <template slot-scope="scope">
             <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia(scope.row)"></el-button>
             <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="ShowDeleteUser(scope.row.id)"></el-button>
-            <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
+            <el-button size="mini" plain type="success" icon="el-icon-check" circle @click="showSetUserRoleDia(scope.row)"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -52,7 +52,7 @@
       </el-pagination>
     </el-card>
 
-    <!-- 添加用户对话框 -->
+    <!-- 添加用户带表格对话框 -->
     <el-dialog title="添加用户" :visible.sync="dialogformVisibleAdd" :modal-append-to-body=false>
       <el-form :model="form">
         <el-form-item label="用户名" :label-width="formLabelWidth">
@@ -95,6 +95,26 @@
       </div>
     </el-dialog>
 
+    <!-- 设置用户权限带表单的对话框dia -->
+    <el-dialog title="分配角色" :visible.sync="dialogFormVisibleRole" :modal-append-to-body=false>
+      <el-form :model="form">
+        <el-form-item label="用户名" :label-width="formLabelWidth">
+          {{username}}
+        </el-form-item>
+
+        <el-form-item label="角色" :label-width="formLabelWidth">
+          <el-select v-model="form.region" placeholder="请选择">
+            <el-option label="用户" value="-1"></el-option>
+          </el-select>
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
+        <el-button type="primary" @click="dialogFormVisibleRole = false">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -117,7 +137,11 @@ export default {
 				mobile: ''
 			},
 			formLabelWidth: '60px',
-			dialogformVisibleAEdit: false
+
+			dialogformVisibleAEdit: false,
+
+			dialogFormVisibleRole: false,
+			username: ''
 		}
 	},
 	methods: {
@@ -158,7 +182,8 @@ export default {
 			this.getUserList() // 重新获取数据 更新视图
 		},
 
-		upPop() {  // 打开删除对话框
+		upPop() {
+			// 打开删除对话框
 			this.dialogformVisibleAdd = true
 		},
 		async addUser() {
@@ -210,15 +235,27 @@ export default {
 			if (status === 200) {
 				this.$message.success(msg)
 				this.getUserList() // 重新获取数据 更新视图
-        this.dialogformVisibleAEdit = false
-        this.form = {}
+				this.dialogformVisibleAEdit = false
+				this.form = {}
 			}
-    },
-    async changeMgState(user,){
-      const res = await this.$axios.put(`users/${user.id}/state/${user.mg_state}`)
-      
-      console.log(res)
-    }
+		},
+		async changeMgState(user) {
+			const res = await this.$axios.put(`users/${user.id}/state/${user.mg_state}`)
+		},
+		// 设置用户权限 打开嵌套表单的对话框
+		async showSetUserRoleDia(user) {
+			this.dialogFormVisibleRole = true
+      this.username = user.username
+      console.log(user)
+			// 请求参数 动态渲染下拉菜单
+			// const res = await this.$axios.put(`users/${user.id}/role`, {
+			// 	params: {
+			// 		id: user.id,
+			// 		rid: user.rid
+			// 	}
+			// })
+			// console.log(res)
+		}
 	},
 	created() {
 		this.getUserList()

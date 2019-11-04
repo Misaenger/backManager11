@@ -29,7 +29,7 @@ export default {
 	methods: {
 		async handleLogin() {
 			const res = await this.$axios.post('login', this.formData)
-
+        console.log(res)
 				const { data, meta: { msg, status } } = res.data
 
         if (status === 200) {  // res.data.meta.status = 200
