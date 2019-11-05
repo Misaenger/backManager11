@@ -103,7 +103,8 @@
         </el-form-item>
 
         <el-form-item label="角色" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="请选择">
+          <el-select v-model="currentRoleId">
+            <el-option label="请选择" :value="-1" disabled></el-option>
             <el-option :label="item.roleName" :value="item.id" v-for="(item,i) in roles" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
@@ -111,7 +112,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleRole = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisibleRole = false">确 定</el-button>
+        <el-button type="primary" @click="setRole()">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -142,7 +143,9 @@ export default {
 
 			dialogFormVisibleRole: false,
 			username: '',
-			roles: []
+      roles: [],
+      currUserId:-1,
+      currentRoleId:-1
 		}
 	},
 	methods: {
@@ -248,14 +251,27 @@ export default {
 		//设置用户权限 打开嵌套表单的对话框
 		async showSetUserRoleDia(user) {
 			this.dialogFormVisibleRole = true
-			this.username = user.username
+      this.username = user.username
+      this.currUserId = user.id
 			// 角色管理 - 角色列表 获取所有用户的角色
 			const res1 = await this.$axios.get(`roles`)
 			this.roles = res1.data.data // 将数组形式数据 提取出来
 			// 根据ID查询用户信息  // 获取到用户的id rid 便于在下拉框显示当前用户角色 关联el-optin的value
       const res = await this.$axios.get(`users/${user.id}`)
-			const currentRole = res.data.data.rid
-		}
+      this.currentRoleId = res.data.data.rid
+    },
+    // 分配用户角色
+    async setRole(){
+      this.dialogFormVisibleRole = false
+      const res = await this.$axios.put(`users/${this.currUserId}/role`,{
+        rid:this.currentRoleId
+      })
+      const {data,meta:{msg,status}} = res.data
+      if (status === 200) {
+        this.$message.success(msg)
+      }
+      
+    }
 	},
 	created() {
 		this.getUserList()
