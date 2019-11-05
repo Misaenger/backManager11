@@ -33,7 +33,7 @@
                 <span>角色列表</span>
               </el-menu-item>
               <!-- 2-2 -->
-              <el-menu-item index="2-2">
+              <el-menu-item index="right">
                 <i class="el-icon-edit-outline"></i>
                 <span>权限列表</span>
               </el-menu-item>
