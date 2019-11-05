@@ -104,7 +104,7 @@
 
         <el-form-item label="角色" :label-width="formLabelWidth">
           <el-select v-model="form.region" placeholder="请选择">
-            <el-option label="用户" value="-1"></el-option>
+            <el-option :label="item.roleName" :value="item.id" v-for="(item,i) in roles" :key="item.id"></el-option>
           </el-select>
         </el-form-item>
 
@@ -141,7 +141,8 @@ export default {
 			dialogformVisibleAEdit: false,
 
 			dialogFormVisibleRole: false,
-			username: ''
+			username: '',
+			roles: []
 		}
 	},
 	methods: {
@@ -240,21 +241,20 @@ export default {
 			}
 		},
 		async changeMgState(user) {
-			const res = await this.$axios.put(`users/${user.id}/state/${user.mg_state}`)
+			const res = await this.$axios.put(
+				`users/${user.id}/state/${user.mg_state}`
+			)
 		},
-		// 设置用户权限 打开嵌套表单的对话框
+		//设置用户权限 打开嵌套表单的对话框
 		async showSetUserRoleDia(user) {
 			this.dialogFormVisibleRole = true
-      this.username = user.username
-      console.log(user)
-			// 请求参数 动态渲染下拉菜单
-			// const res = await this.$axios.put(`users/${user.id}/role`, {
-			// 	params: {
-			// 		id: user.id,
-			// 		rid: user.rid
-			// 	}
-			// })
-			// console.log(res)
+			this.username = user.username
+			// 角色管理 - 角色列表 获取所有用户的角色
+			const res1 = await this.$axios.get(`roles`)
+			this.roles = res1.data.data // 将数组形式数据 提取出来
+			// 根据ID查询用户信息  // 获取到用户的id rid 便于在下拉框显示当前用户角色 关联el-optin的value
+      const res = await this.$axios.get(`users/${user.id}`)
+			const currentRole = res.data.data.rid
 		}
 	},
 	created() {
