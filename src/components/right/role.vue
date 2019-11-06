@@ -6,6 +6,25 @@
 
     <!-- 表格 -->
     <el-table :data="roleData" style="width: 100%">
+      
+      <!-- 展开行 -->
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-row v-for="(item1,i) in props.row.children" :key="i"> <!-- 外围列容器 -->
+            <el-col :span="4"> <!-- 第一行 -->
+            <el-tag>{{item1.authName}}</el-tag><span> > </span> 
+            </el-col :span="20">
+
+              <el-col> <!-- 第二行 -->
+                <el-row>  <!-- 第二行列容器内两列 -->
+                  <el-col :span="20"> </el-col> 
+                  <el-col :span="20"> </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </el-row>
+        </template>
+      </el-table-column>
 
       <el-table-column type="index" label="#" width="40">
       </el-table-column>
@@ -23,7 +42,7 @@
           <el-button size="mini" plain type="success" icon="el-icon-check" circle @click="showSetUserRoleDia(scope.row)"></el-button>
         </template>
       </el-table-column>
-      
+
     </el-table>
 
   </el-card>
