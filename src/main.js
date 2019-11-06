@@ -8,6 +8,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import '@/assets/style/reset.css'
 import Myaxios from '@/plugins/axios.js'
 import moment from 'moment'
+import mybread from '@/components/cuscom/mybread.vue'
 
 
 Vue.use(Myaxios)
@@ -18,6 +19,10 @@ Vue.config.productionTip = false
 Vue.filter('fmtdate',(value)=>{  // 处理日期格式
   return moment(value).format('YYYY-MM-DD')
 })
+
+// 全局组件
+Vue.component(mybread.name,mybread)
+
 
 /* eslint-disable no-new */
 new Vue({
