@@ -1,13 +1,8 @@
 <template>
   <div>
     <el-card class="box-card">
-
-      <!-- 面包屑 -->
-      <el-breadcrumb separator="/" class="breadcrumb">
-        <el-breadcrumb-item>首页</el-breadcrumb-item>
-        <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-        <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-      </el-breadcrumb>
+      <!-- 面包屑全局组件 -->
+    <mybread level1="用户管理" level2="用户列表" class="mybread"> </mybread>
       <!-- 搜索 -->
       <el-row>
         <el-col>
