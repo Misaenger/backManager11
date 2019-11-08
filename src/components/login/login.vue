@@ -3,10 +3,10 @@
     <el-form label-width="100px" label-position="top" :model="formData" class="login-form">
       <h2>后台管理系统</h2>
       <el-form-item label="用户">
-        <el-input v-model="formData.username"></el-input>
+        <el-input v-model="formData.username" placeholder="test"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="formData.password" type="password"></el-input>
+        <el-input v-model="formData.password" type="password" placeholder="123"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button class="login-btn" @click="handleLogin()">登录</el-button>

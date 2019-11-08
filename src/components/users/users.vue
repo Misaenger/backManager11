@@ -155,7 +155,6 @@ export default {
 			const { data: { total, users }, meta: { msg, status } } = res.data
 			if (status === 200) {
         this.tableData = users
-        console.log(this.tableData)
 				this.total = total
 				this.value = users.mg_state
 			} else {

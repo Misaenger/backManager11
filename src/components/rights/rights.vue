@@ -26,7 +26,7 @@
 
 <script>
 export default {
-	name: 'right',
+	name: 'rights',
 	data() {
 		return {
 			tableData: []

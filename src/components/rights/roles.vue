@@ -154,7 +154,6 @@ export default {
 			const res = await this.$axios.post(`roles/${this.currRoleId}/rights`, {
 				rids: arr.join(',') // 后台规定，rid值必须以逗号分隔
 			})
-			console.log(res)
 			this.getRoleList()
 			this.dialogFormVisible = false
 		},
@@ -169,7 +168,6 @@ export default {
 				roleName: this.form.roleName,
         roleDesc: this.form.roleDesc,
 			})
-      console.log(res)
        this.dialogformVisibleAEdit = false
 		}
 	},

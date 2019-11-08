@@ -9,82 +9,18 @@
         <el-aside class="container-aside">
 
           <el-menu :unique-opened="true" :router="true">
-            <!-- 1 -->
-            <el-submenu index="1">
+            <!-- 外层 -->
+            <el-submenu :index="item.order.toString()" v-for="(item,i) in menus" :key="item.id">
               <template slot="title">
-                <i class="el-icon-user-solid"></i>
-                <span>用户管理</span>
+                <i class="el-icon-notebook-2"></i>
+                <span>{{item.authName}}</span>
               </template>
-              <!-- 1-1 -->
-              <el-menu-item index="users">
+              <!-- 内层 -->
+              <el-menu-item :index="item1.path" v-for="(item1,i) in item.children" :key="item1.id">
                 <i class="el-icon-edit-outline"></i>
-                <span>用户列表</span>
+                <span>{{item1.authName}}</span>
               </el-menu-item>
             </el-submenu>
-            <!-- 2 -->
-            <el-submenu index="2">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>权限管理</span>
-              </template>
-              <!-- 2-1 -->
-              <el-menu-item index="role">
-                <i class="el-icon-edit-outline"></i>
-                <span>角色列表</span>
-              </el-menu-item>
-              <!-- 2-2 -->
-              <el-menu-item index="right">
-                <i class="el-icon-edit-outline"></i>
-                <span>权限列表</span>
-              </el-menu-item>
-            </el-submenu>
-            <!-- 3 -->
-            <el-submenu index="3">
-              <template slot="title">
-                <i class="el-icon-s-shop"></i>
-                <span>商品管理</span>
-              </template>
-              <!-- 3-1 -->
-              <el-menu-item index="3-1">
-                <i class="el-icon-edit-outline"></i>
-                <span>商品列表</span>
-              </el-menu-item>
-              <!-- 3-2 -->
-              <el-menu-item index="3-2">
-                <i class="el-icon-edit-outline"></i>
-                <span>分类参数</span>
-              </el-menu-item>
-              <!-- 3-3 -->
-              <el-menu-item index="3-3">
-                <i class="el-icon-edit-outline"></i>
-                <span>商品分类</span>
-              </el-menu-item>
-            </el-submenu>
-            <!-- 4 -->
-            <el-submenu index="4">
-              <template slot="title">
-                <i class="el-icon-s-order"></i>
-                <span>订单管理</span>
-              </template>
-              <!-- 4-1 -->
-              <el-menu-item index="4-1">
-                <i class="el-icon-edit-outline"></i>
-                <span>订单列表</span>
-              </el-menu-item>
-            </el-submenu>
-            <!-- 5 -->
-            <el-submenu index="5">
-              <template slot="title">
-                <i class="el-icon-s-data"></i>
-                <span>数据统计</span>
-              </template>
-              <!-- 5-1 -->
-              <el-menu-item index="5-1">
-                <i class="el-icon-edit-outline"></i>
-                <span>数据报表</span>
-              </el-menu-item>
-            </el-submenu>
-
           </el-menu>
 
         </el-aside>
@@ -99,19 +35,26 @@
 <script>
 export default {
   name: 'home',
-  methods: {
-    signout(){
-      this.$message.success('退出成功')
-      localStorage.clear()  // 清除缓存中的token
-      this.$router.push({name:'login'})  // 跳转回登录页面
+  data() {
+    return {
+      menus:[],
     }
   },
-  beforeCreate(){  // 在实例创建前验证
-    const token = localStorage.getItem('token')  // 获取缓存中的token
-    if (!token) {    // 如果没有token跳回登录界面
-      this.$router.push({name:'login'})
-    }
-  },
+	methods: {
+		signout() {
+			this.$message.success('退出成功')
+			localStorage.clear() // 清除缓存中的token
+			this.$router.push({ name: 'login' }) // 跳转回登录页面
+		},
+		// 获取导航数据
+		async getMenus() {
+      const res = await this.$axios.get(`menus`)
+      this.menus = res.data.data
+		}
+	},
+	created() {
+		this.getMenus()
+	}
 }
 </script>
 
@@ -129,14 +72,14 @@ export default {
   padding-top: 1rem;
 
   h2 {
-    line-height 50px;
+    line-height: 50px;
     font-weight: 600;
     font-size: 26px;
     color: rgb(163, 77, 77);
   }
 
   a {
-    line-height 50px;
+    line-height: 50px;
     position: absolute;
     right: 1rem;
     top: 1.4rem;
