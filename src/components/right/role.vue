@@ -2,7 +2,6 @@
   <el-card>
     <!-- 面包屑全局组件 -->
     <mybread level1="权限管理" level2="角色列表" class="mybread"> </mybread>
-    <el-button type="info" plain>添加角色</el-button>
 
     <!-- 表格 -->
     <el-table :data="roleData" style="width:100%">
@@ -47,17 +46,17 @@
       <el-table-column prop="roleDesc" label="角色描述" width="200">
       </el-table-column>
 
-      <el-table-column prop="address" label="操作">
+      <el-table-column prop="address" label="修改 / 添加权限">
         <template slot-scope="scope">
           <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia(scope.row)"></el-button>
-          <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="ShowDeleteUser(scope.row.id)"></el-button>
           <el-button size="mini" plain type="success" icon="el-icon-check" circle @click="showSetRightDia(scope.row)"></el-button>
         </template>
       </el-table-column>
 
     </el-table>
 
-    <el-dialog title="添加用户权限" :visible.sync="dialogFormVisible" :modal-append-to-body="false">
+    <!-- 修改角色权限 -->
+    <el-dialog title="添加角色权限" :visible.sync="dialogFormVisible" :modal-append-to-body="false">
       <!-- ...这里插入表单组件 -->
       <el-tree :data="treeList" show-checkbox node-key="id" default-expand-all :default-checked-keys="arrCheck" :props="defaultProps" ref="tree">
       </el-tree>
@@ -65,6 +64,23 @@
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="setRightDia()">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 修改用户对话框 -->
+    <el-dialog title="修改用户信息" :visible.sync="dialogformVisibleAEdit" :modal-append-to-body=false>
+      <el-form :model="form">
+        <el-form-item label="角色" :label-width="formLabelWidth">
+          <el-input v-model="form.roleName" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" :label-width="formLabelWidth">
+          <el-input v-model="form.roleDesc" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogformVisibleAEdit = false">取 消</el-button>
+        <el-button type="primary" @click="editRole()">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -83,7 +99,15 @@ export default {
 				label: 'authName'
 			},
 			arrCheck: [],
-			currRoleId: []
+			currRoleId: [],
+
+			dialogformVisibleAEdit: false,
+			form: {
+				roleDesc: '',
+				roleName: ''
+			},
+			formLabelWidth: '60px',
+			edicurrRole: []
 		}
 	},
 	methods: {
@@ -126,13 +150,27 @@ export default {
 			let arr1 = this.$refs.tree.getCheckedKeys()
 			let arr2 = this.$refs.tree.getHalfCheckedKeys()
 			let arr = [...arr1, ...arr2] // ES6展开运算符，自动将数组展开
-      //或者用 let arr = arr1.concat(arr2) 数组拼接方法
+			//或者用 let arr = arr1.concat(arr2) 数组拼接方法
 			const res = await this.$axios.post(`roles/${this.currRoleId}/rights`, {
-				rids: arr.join(',')  // 后台规定，rid值必须以逗号分隔
-			}) 
+				rids: arr.join(',') // 后台规定，rid值必须以逗号分隔
+			})
 			console.log(res)
 			this.getRoleList()
 			this.dialogFormVisible = false
+		},
+		// 修改角色描述
+		showEditUserDia(role) {
+			this.dialogformVisibleAEdit = true
+			this.edicurrRole = role
+			this.form = role
+		},
+		async editRole() {
+			const res = await this.$axios.put(`roles/${this.edicurrRole.id}`, {
+				roleName: this.form.roleName,
+        roleDesc: this.form.roleDesc,
+			})
+      console.log(res)
+       this.dialogformVisibleAEdit = false
 		}
 	},
 	created() {

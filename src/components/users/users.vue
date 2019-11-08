@@ -33,7 +33,7 @@
             </el-switch>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="操作" width="160">
+        <el-table-column prop="address" label="修改 / 删除 / 添加权限" width="160">
           <template slot-scope="scope">
             <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia(scope.row)"></el-button>
             <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="ShowDeleteUser(scope.row.id)"></el-button>
@@ -154,7 +154,8 @@ export default {
 			})
 			const { data: { total, users }, meta: { msg, status } } = res.data
 			if (status === 200) {
-				this.tableData = users
+        this.tableData = users
+        console.log(this.tableData)
 				this.total = total
 				this.value = users.mg_state
 			} else {
