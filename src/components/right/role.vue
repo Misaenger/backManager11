@@ -12,7 +12,7 @@
         <template slot-scope="props">
           <el-row v-for="(item1,i) in props.row.children" :key="i">
             <!-- 外围列容器 -->
-            <el-col :span="3"  class="padding">
+            <el-col :span="4" class="padding">
               <!-- 第一行 -->
               <el-tag @close="deleRight(props.row.id,item1.id,props.row)" type="success" closable>{{item1.authName}}</el-tag>
               <i class="el-icon-arrow-right"></i>
@@ -25,7 +25,7 @@
                   <i class="el-icon-arrow-right"></i>
                 </el-col>
                 <el-col :span="20">
-                  <el-col :span="5" v-for="(item3,i) in item2.children" :key="i" class="padding">
+                  <el-col :span="4" v-for="(item3,i) in item2.children" :key="i" class="padding">
                     <el-tag @close="deleRight(props.row.id,item3.id,props.row)" type="warning" closable>{{item3.authName}}</el-tag>
                   </el-col>
                 </el-col>
@@ -51,11 +51,22 @@
         <template slot-scope="scope">
           <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia(scope.row)"></el-button>
           <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="ShowDeleteUser(scope.row.id)"></el-button>
-          <el-button size="mini" plain type="success" icon="el-icon-check" circle @click="showSetUserRoleDia(scope.row)"></el-button>
+          <el-button size="mini" plain type="success" icon="el-icon-check" circle @click="showSetRightDia(scope.row)"></el-button>
         </template>
       </el-table-column>
 
     </el-table>
+
+    <el-dialog title="添加用户权限" :visible.sync="dialogFormVisible" :modal-append-to-body="false">
+      <!-- ...这里插入表单组件 -->
+      <el-tree :data="treeList" show-checkbox node-key="id" default-expand-all :default-checked-keys="arrCheck" :props="defaultProps">
+      </el-tree>
+
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="setRightDia()">确 定</el-button>
+      </div>
+    </el-dialog>
 
   </el-card>
 </template>
@@ -64,7 +75,14 @@
 export default {
 	data() {
 		return {
-			roleData: []
+			roleData: [],
+			dialogFormVisible: false,
+			treeList: [],
+			defaultProps: {
+				children: 'children',
+				label: 'authName'
+			},
+			arrCheck: []
 		}
 	},
 	methods: {
@@ -74,13 +92,36 @@ export default {
 			console.log(this.roleData)
 		},
 		// 取消用户权限
-		async deleRight(roleId, rightId,role) {
+		async deleRight(roleId, rightId, role) {
 			const res = await this.$axios.delete(`roles/${roleId}/rights/${rightId}`)
 			if (res.data.meta.status === 200) {
 				this.$message.success(res.data.meta.msg)
-        role.children = res.data.data // 返回数据res.data.data是该用户的剩余权限
+				role.children = res.data.data // 返回数据res.data.data是该用户的剩余权限
 			}
-		}
+		},
+
+		// 获取所有的用户权限并展开
+		async showSetRightDia(role) {
+			// 获取树形结构权限数据
+			const res = await this.$axios.get(`rights/tree`)
+			this.treeList = res.data.data
+			// 将当前用户权限打勾
+			var tempArr = []
+			role.children.forEach(item1 => {
+				// tempArr.push(item1.id)
+				item1.children.forEach(item2 => {
+					// tempArr.push(item2.id)
+					item2.children.forEach(item3 => {
+						tempArr.push(item3.id)
+					})
+				})
+			})
+      this.arrCheck = tempArr
+      
+      this.dialogFormVisible = true
+		},
+		// 添加用户角色权限
+		async setRightDia() {}
 	},
 	created() {
 		this.getRoleList()
