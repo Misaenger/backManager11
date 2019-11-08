@@ -59,7 +59,7 @@
 
     <el-dialog title="添加用户权限" :visible.sync="dialogFormVisible" :modal-append-to-body="false">
       <!-- ...这里插入表单组件 -->
-      <el-tree :data="treeList" show-checkbox node-key="id" default-expand-all :default-checked-keys="arrCheck" :props="defaultProps">
+      <el-tree :data="treeList" show-checkbox node-key="id" default-expand-all :default-checked-keys="arrCheck" :props="defaultProps" ref="tree">
       </el-tree>
 
       <div slot="footer" class="dialog-footer">
@@ -82,14 +82,14 @@ export default {
 				children: 'children',
 				label: 'authName'
 			},
-			arrCheck: []
+			arrCheck: [],
+			currRoleId: []
 		}
 	},
 	methods: {
 		async getRoleList() {
 			const res = await this.$axios.get('roles')
 			this.roleData = res.data.data
-			console.log(this.roleData)
 		},
 		// 取消用户权限
 		async deleRight(roleId, rightId, role) {
@@ -110,18 +110,30 @@ export default {
 			role.children.forEach(item1 => {
 				// tempArr.push(item1.id)
 				item1.children.forEach(item2 => {
-					// tempArr.push(item2.id)
+					// tempArr.push(item2.id)npm
 					item2.children.forEach(item3 => {
 						tempArr.push(item3.id)
 					})
 				})
 			})
-      this.arrCheck = tempArr
-      
-      this.dialogFormVisible = true
+			this.arrCheck = tempArr
+			this.dialogFormVisible = true
+			this.currRoleId = role.id
 		},
-		// 添加用户角色权限
-		async setRightDia() {}
+		// 修改用户角色权限
+		async setRightDia() {
+			// 获取rid （即树形上全选与半选的id的数组）
+			let arr1 = this.$refs.tree.getCheckedKeys()
+			let arr2 = this.$refs.tree.getHalfCheckedKeys()
+			let arr = [...arr1, ...arr2] // ES6展开运算符，自动将数组展开
+      //或者用 let arr = arr1.concat(arr2) 数组拼接方法
+			const res = await this.$axios.post(`roles/${this.currRoleId}/rights`, {
+				rids: arr.join(',')  // 后台规定，rid值必须以逗号分隔
+			}) 
+			console.log(res)
+			this.getRoleList()
+			this.dialogFormVisible = false
+		}
 	},
 	created() {
 		this.getRoleList()
