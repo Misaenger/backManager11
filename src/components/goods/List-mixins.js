@@ -24,7 +24,6 @@ export default {
       if (res.meta.status !== 200) return this.$message.error('获取商品列表失败！')
       this.goodslist = res.data.goods
       this.total = res.data.total
-      // console.log(res)
     },
     // 监听 pageSize 的变化，并立即获取最新的数据
     handleSizeChange(newSize) {

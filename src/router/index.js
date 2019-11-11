@@ -8,6 +8,7 @@ import roles from '@/components/rights/roles.vue'
 import rights from '@/components/rights/rights.vue'
 import goods from '@/components/goods/goods.vue'
 import goodsadd from '@/components/goods/goodsadd.vue'
+import params from '@/components/goods/params.vue'
 
 Vue.use(Router)
 
@@ -44,6 +45,11 @@ const router = new Router({
           path: '/goodsadd',
           name: 'goodsadd',
           component: goodsadd
+        },
+        {
+          path: '/params',
+          name: 'params',
+          component: params
         }
       ]
     }

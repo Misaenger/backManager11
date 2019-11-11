@@ -188,7 +188,6 @@ export default {
 		async addUser() {
 			// 在后台添加用户
 			const res = await this.$axios.post('users', this.form) // 直接将form对象传过去里面包含4个请求参数
-			console.log(res)
 			const { data, meta: { msg, status } } = res.data
 			if (status === 201) {
 				this.dialogformVisibleAdd = false
