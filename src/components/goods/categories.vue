@@ -31,7 +31,7 @@
 
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" icon="el-icon-edit" circle  size="mini" @click="showEditDialog(scope.row)"></el-button>
+            <!-- <el-button type="primary" icon="el-icon-edit" circle size="mini" @click="showEditDialog(scope.row)"></el-button> -->
             <el-button type="danger" icon="el-icon-delete" circle size="mini" @click="remove(scope.row)"></el-button>
           </template>
         </el-table-column>
@@ -44,17 +44,15 @@
 
     </el-card>
 
-
-
     <!-- 添加分类的对话框 -->
     <el-dialog title="添加分类" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed" :modal-append-to-body="false">
       <!-- 添加分类的表单 -->
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="100px">
-        
+
         <el-form-item label="分类名称：" prop="cat_name">
           <el-input v-model="addForm.cat_name"></el-input>
         </el-form-item>
-        
+
         <el-form-item label="父级分类：">
           <!-- :options指定数据源 ，:props指定对应关系 -->
           <el-cascader :show-all-levels="false" :options="pcate" :props="cascaderProps" v-model="selectedParentCate" @change="handleChange">
@@ -89,7 +87,7 @@
 export default {
   data() {
     return {
-      value:false,
+      value: false,
       // 获取分类列表时候的参数对象
       getListParams: {
         type: 3, // 获取三级分类
@@ -171,7 +169,7 @@ export default {
         params: this.getListParams //传了一个对象包括当前页和每页条数以返回分页形式数据
         // 单纯传this.getListParams.type参数则只返回纯数组对象数据result
       })
-      const { data:{result,total}, meta:{ msg, status } } = res.data // 返回数据解构
+      const { data: { result, total }, meta: { msg, status } } = res.data // 返回数据解构
       this.total = total // 为分页器总数据条数赋值
       this.cateList = result // 为树形的分类列表数据赋值
     },
@@ -242,20 +240,14 @@ export default {
       this.editForm.id = ''
     },
     // 点击按钮，保存对分类信息的修改
-    saveCate() {
-      this.$refs.editFormRef.validate(async valid => {
-        if (!valid) return
-        const { data: res } = await this.$axios.put(
-          'categories/' + this.editForm.id,
-          {
-            cat_name: this.editForm.cat_name
-          }
-        )
-        if (res.meta.status !== 200) return this.$message.error('更新失败！')
-        this.$message.success('更新成功！')
-        this.getCateList()
-        this.editDialogVisible = false
-      })
+    async saveCate() {
+      const { data: res } = await this.$axios.put(
+        `categories/${this.editForm.id}`,
+        { params: { cat_name: this.editForm.cat_name } }
+      )
+      
+      this.getCateList()
+      this.editDialogVisible = false
     },
     // 删除分类
     async remove(row) {

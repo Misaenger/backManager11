@@ -10,6 +10,8 @@ import goods from '@/components/goods/goods.vue'
 import goodsadd from '@/components/goods/goodsadd.vue'
 import params from '@/components/goods/params.vue'
 import categories from '@/components/goods/categories.vue'
+import orders from '@/components/orders/orders.vue'
+import reports from '@/components/reports/reports.vue'
 
 Vue.use(Router)
 
@@ -21,6 +23,7 @@ const router = new Router({
       path: '/home',
       name: 'home',
       component: home,
+      redirect: "/users",   //默认子路由
       children: [
         {
           path: '/users',
@@ -56,6 +59,14 @@ const router = new Router({
           path: '/categories',
           name: 'categories',
           component: categories
+        },{
+          path: '/orders',
+          name: 'orders',
+          component: orders
+        },{
+          path: '/reports',
+          name: 'reports',
+          component: reports
         }
       ]
     }
