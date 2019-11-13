@@ -26,11 +26,11 @@ export default {
 			}
 		}
 	},
-	methods: {
+	methods: {	
 		async handleLogin() {
+				
 			const res = await this.$axios.post('login', this.formData)
 				const { data, meta: { msg, status } } = res.data
-
         if (status === 200) {  // res.data.meta.status = 200
           localStorage.setItem('token',data.token)
 
@@ -45,6 +45,8 @@ export default {
             duration: 1600
           })
 				}
+
+					
 			
 		}
 	}

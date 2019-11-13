@@ -9,6 +9,7 @@ import rights from '@/components/rights/rights.vue'
 import goods from '@/components/goods/goods.vue'
 import goodsadd from '@/components/goods/goodsadd.vue'
 import params from '@/components/goods/params.vue'
+import categories from '@/components/goods/categories.vue'
 
 Vue.use(Router)
 
@@ -50,6 +51,11 @@ const router = new Router({
           path: '/params',
           name: 'params',
           component: params
+        },
+        {
+          path: '/categories',
+          name: 'categories',
+          component: categories
         }
       ]
     }

@@ -16,7 +16,7 @@
       <el-row>
         <el-col>
           请先选择商品分类：
-          <el-cascader :show-all-levels="false" expand-trigger="hover" :options="catelist" :props="cascaderProps" v-model="selectedCate" @change="handleCateChange">
+          <el-cascader style="width:120px" :show-all-levels="false" expand-trigger="hover" :options="catelist" :props="cascaderProps" v-model="selectedCate" @change="handleCateChange">
           </el-cascader>
         </el-col>
       </el-row>
@@ -45,10 +45,11 @@
             </el-table-column>
             <el-table-column type="index"></el-table-column>
             <el-table-column label="参数名称" prop="attr_name"></el-table-column>
+
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <!-- <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope)">修改</el-button> -->
-                <el-button type="danger" icon="el-icon-delete" circle @click="remove(scope)" plain></el-button>
+                <el-button type="danger" icon="el-icon-delete" circle @click="remove(scope)" ></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -80,7 +81,7 @@
             <el-table-column label="操作">
               <template slot-scope="scope">
                 <!-- <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope)">修改</el-button> -->
-                <el-button type="danger" plain icon="el-icon-delete" size="mini" @click="remove(scope)"></el-button>
+                <el-button  type="danger" icon="el-icon-delete" circle @click="remove(scope)"></el-button>
               </template>
             </el-table-column>
           </el-table>
